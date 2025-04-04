@@ -1,0 +1,23 @@
+---
+- name: checking lineinfile
+  hosts: db
+  tasks:
+  - name: add line after samosa
+    lineinfile:
+      path: /tmp/1.txt
+      line: "I like samosa very much before samosa"
+      # insertafter: "^samosa"
+      insertbefore: "^samosa"
+  - name: block of lines
+    blockinfile:
+      path: /tmp/1.txt
+      block: |
+        I like samosa very much before samosa
+        I like samosa very much before samosa
+        I like samosa very much before samosa
+      insertafter: "^Line1"
+  - name: replace line
+    lineinfile:
+      path: /tmp/1.txt
+      regexp: '^I like samosa very much before samosa'
+      line: "I like vadapav very much before samosa"
