@@ -22,4 +22,4 @@
       create: true
       block: |
              Hello friends, learning ansible is a fun.
-             we will use similar commands to install docker
+             we will use similar commands to install dockers
