@@ -1,0 +1,30 @@
+---
+- name : n1
+  vars:
+    db_package: mariadb-server
+    db_service: mariadb
+    web_package: apaches2
+    web_service: apache2
+  hosts: db
+  gather_facts: no
+  tasks:
+  - name: apt update
+    apt:
+      update_cache: yes
+  - name: Attempt to set up a webserver
+    block:
+    - name: Install {{ web_package }} package
+      apt:
+        name: "{{ web_package }}"
+        state: present
+    # rescue won't execute if the block is successful
+    rescue:
+    - name: Install {{ db_package }} package
+      apt:
+        name: "{{ db_package }}"
+        state: present
+    always:
+    - name: Start {{ db_service }} service
+      service:
+        name: "{{ db_service }}"
+        state: started

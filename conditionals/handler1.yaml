@@ -1,0 +1,43 @@
+- name: learning handlers
+  hosts: web
+  tasks:
+  - name: copy web.conf
+    copy:
+      src: web.conf
+      dest: /etc/httpd/conf/httpd.conf
+    changed_when: true
+    notify:
+      - starthttpd
+      - printdata
+  - name: create file
+    file:
+      path: /home/1.txt
+      state: touch
+    notify:
+    - printdata
+  
+  handlers:
+  - name: printdata
+    debug:
+      msg: "data changed"
+    register: hello
+  - name: starthttpd
+    service:
+      name: httpd
+      state: restarted
+      enabled: true
+  - name: copy demo.example.conf configuration template
+    template:
+      src: /var/lib/templates/demo.example.conf.template
+      dest: /etc/httpd/conf.d/demo.example.conf
+    notify:
+    - restart mysql
+    - restart apache
+  - name: restart mysql
+    service:
+      name: mariadb
+      state: restarted
+  - name: restart apache
+    service:
+      name: httpd
+      state: restarted

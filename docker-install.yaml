@@ -1,0 +1,44 @@
+---
+- name: install docker
+  hosts: uk
+  tasks:
+  - name: apt update
+    apt:
+      update_cache: yes
+  - name: create directory
+    file:
+      path: /etc/apt/keyrings
+      state: directory
+  - name: add docker gpg key
+    apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+      keyring: /etc/apt/keyrings/docker.gpg
+  - name: add docker repository
+    apt_repository:
+      repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release | lower }} stable"
+      state: present
+  - name: apt update
+    apt:
+      update_cache: yes
+  - name: install docker "{{ item }}"
+    apt:
+      name: "{{ item }}"
+      state: present
+    loop:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+      - docker-buildx-plugin
+  - name: start docker service
+    service:
+      name: docker
+      state: started
+      enabled: true
+  - name: check status of docker service
+    command: systemctl status docker
+    register: docker_status
+  - name: debug docker status
+    debug:
+      var: docker_status.stdout_lines
