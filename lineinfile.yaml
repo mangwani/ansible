@@ -21,3 +21,8 @@
       path: /tmp/1.txt
       regexp: '^I like samosa very much before samosa'
       line: "I like vadapav very much before samosa"
+  - name: remove line
+    lineinfile:
+      path: /tmp/1.txt
+      regexp: '^I like samosa very much before samosa'
+      state: absent
